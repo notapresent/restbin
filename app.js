@@ -6,6 +6,7 @@ const { MemoryStore, serverInfo } = require('./models');
 
 function makeApp(config = {}) {
   const app = express();
+  app.disable('x-powered-by');
   app.use(bodyParser.raw({
     inflate: true,
     limit: '1Mb',
