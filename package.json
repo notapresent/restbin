@@ -1,0 +1,33 @@
+{
+  "name": "restbin",
+  "version": "0.3.0",
+  "description": "Key/value storage with REST api",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "NODE_ENV=test mocha --recursive ./tests "
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "async": "^2.6.1",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "chai-http": "^4.2.0",
+    "dotenv": "^6.2.0",
+    "eslint": "^5.11.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-chai-friendly": "^0.4.1",
+    "eslint-plugin-import": "^2.14.0",
+    "mocha": "^5.2.0",
+    "morgan": "^1.9.1",
+    "node-mocks-http": "^1.7.3",
+    "sinon": "^7.2.2"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4"
+  }
+}
