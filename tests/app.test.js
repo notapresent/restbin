@@ -12,8 +12,9 @@ const AUTH_TOKEN = 'testtoken';
 
 describe('App', () => {
   let app;
-  beforeEach((done) => {
-    app = makeApp({ token: AUTH_TOKEN });
+
+  beforeEach('Create app and put one key', async () => {
+    app = await makeApp({ token: AUTH_TOKEN });
     chai.request(app)
       .put(`/testKey?token=${AUTH_TOKEN}`)
       .send({ objKey: 'objValue' })
@@ -21,7 +22,7 @@ describe('App', () => {
         if (error) {
           throw new Error(error);
         }
-        done();
+        // done();
       });
   });
 
@@ -144,47 +145,6 @@ describe('App', () => {
         .end((err, res) => {
           should.not.exist(err);
           res.status.should.equal(400);
-          done();
-        });
-    });
-  });
-
-  describe('POST', () => {
-    it('/ should store value and return new random key and 201', (done) => {
-      let newKey;
-      series([
-        (cb) => {
-          chai.request(app)
-            .post(`/?token=${AUTH_TOKEN}`)
-            .send({ objKey: 'newObjValue' })
-            .end((err, res) => {
-              should.not.exist(err);
-              res.status.should.equal(201);
-              res.body.key.should.be.a('string');
-              newKey = res.body.key;
-              cb();
-            });
-        },
-        (cb) => {
-          chai.request(app)
-            .get(`/${newKey}`)
-            .end((err, res) => {
-              should.not.exist(err);
-              res.status.should.equal(200);
-              res.body.objKey.should.equal('newObjValue');
-              cb();
-            });
-        },
-      ], done());
-    });
-
-    it('request without token should return 403', (done) => {
-      chai.request(app)
-        .post('/testKey') // no token!
-        .send({ objKey: 'newObjValue' })
-        .end((err, res) => {
-          should.not.exist(err);
-          res.status.should.equal(403);
           done();
         });
     });

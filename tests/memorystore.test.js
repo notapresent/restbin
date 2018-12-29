@@ -1,53 +1,56 @@
 const chai = require('chai');
-// chaiAsPromised = require('chai-as-promised'),
-const { MemoryStore } = require('../models');
-// chai.use(chaiAsPromised);
+chai.use(require('chai-as-promised'));
+
 const { expect } = chai;
+
+const MemoryStore = require('../models/memorystore');
 
 
 describe('MemoryStore', () => {
   let store;
 
-  beforeEach('Create new empty store', () => {
+  beforeEach('Create and open new empty store', async () => {
     store = Object.create(MemoryStore);
+    await store.open();
+  });
+
+  afterEach('Close store', async () => {
+    await store.close();
   });
 
   describe('get', () => {
-    it('Should return null for non-existent key', () => {
-      expect(store.get('fake')).to.be.null;
+    it('Should reject with Error.notFound for non-existent key', async () => {
+      try {
+        await store.get('non-existent');
+      } catch (err) {
+        expect(err.code).to.equal('notFound');
+      }
     });
 
-    it('Should return value, previously stored with put', () => {
-      store.put('key', 'value');
-      expect(store.get('key')).to.equal('value');
+    it('Should resolve with value, previously stored with put', async () => {
+      await store.put('key', 'value');
+      expect(await store.get('key')).to.equal('value');
     });
   });
 
+
   describe('put', () => {
-    it('Should overwrite existing value', () => {
-      store.put('key', 'oldValue');
-      store.put('key', 'newValue');
-      expect(store.get('key')).to.equal('newValue');
-    });
-
-    it('Should generate and return random key if called with null key', () => {
-      const newKey = store.put(null, 'value');
-      const storedValue = store.get(newKey);
-      expect(newKey).to.be.a('string');
-      expect(storedValue).to.equal('value');
-    });
-
-    it('Should throw if key or value isnt string', () => {
-      expect(() => { store.put([], 'test'); }).to.throw();
-      expect(() => { store.put('test', []); }).to.throw();
+    it('Should overwrite existing value', async () => {
+      await store.put('key', 'oldValue');
+      await store.put('key', 'newValue');
+      expect(await store.get('key')).to.equal('newValue');
     });
   });
 
   describe('delete', () => {
-    it('Should delete value at key', () => {
-      store.put('key', 'value');
-      store.delete('key');
-      expect(store.get('key')).to.be.null;
+    it('Should delete value at key', async () => {
+      await store.put('key', 'value');
+      await store.delete('key');
+      try {
+        await store.get('key');
+      } catch (err) {
+        expect(err.code).to.equal('notFound');
+      }
     });
   });
 
@@ -57,13 +60,6 @@ describe('MemoryStore', () => {
       const sanitizedKey = store.sanitizeKey(rawKey);
       expect(sanitizedKey).to.be.a('string');
       expect(sanitizedKey).to.equal('Abc123');
-    });
-
-    it('createKey should create alphanumeric key of specified length', () => {
-      const key = store.createKey(8);
-      expect(key).to.be.a('string');
-      expect(key.length).to.equal(8);
-      expect((/^[A-Za-z0-9]{8}$/).test(key)).to.be.true;
     });
   });
 });

@@ -4,8 +4,8 @@ const { makeApp } = require('./app');
 const config = require('./config');
 
 
-const app = makeApp(config);
-
-app.listen(config.port, config.host, () => {
-  console.log(`Listening on port ${config.host}:${config.port}`);
+makeApp(config).then((app) => {
+  app.listen(config.port, config.host, () => {
+    console.log(`Listening on port ${config.host}:${config.port}`);
+  });
 });

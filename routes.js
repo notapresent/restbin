@@ -27,34 +27,34 @@ const makeRouter = (store, serverInfo) => {
     res.json(serverInfo());
   });
 
-  router.get('/:key', (req, res) => {
-    const value = store.get(req.key);
-
-    if (value === null) {
-      res.status(404).end();
-    } else {
+  router.get('/:key', async (req, res) => {
+    try {
+      const value = await store.get(req.key);
       res.status(200).set('Content-Type', 'application/json').send(value);
+    } catch (err) {
+      if (err.code === 'notFound') {
+        res.status(404).end();
+      } else {
+        res.status(500).end();
+      }
     }
   });
 
-  router.put('/:key', (req, res) => {
-    const exists = store.get(req.key) !== null; // TODO store.exists(key)
-    store.put(req.key, req.body.toString());
-    res.status(exists ? 204 : 201).end();
+  router.put('/:key', async (req, res) => {
+    try {
+      const oldValue = await store.put(req.key, req.body.toString());
+      res.status(typeof oldValue === 'undefined' ? 201 : 204).end();
+    } catch (err) {
+      res.status(500).end();
+    }
   });
 
-  router.post('/', (req, res) => {
-    const newKey = store.put(null, req.body.toString());
-    res.status(201).json({ key: newKey });
-  });
-
-  router.delete('/:key', (req, res) => {
-    const exists = store.get(req.key) !== null; // TODO store.exists(key)
-    if (exists) {
-      store.delete(req.key);
-      res.status(204).end();
-    } else {
-      res.status(404).end();
+  router.delete('/:key', async (req, res) => {
+    try {
+      const oldValue = await store.delete(req.key);
+      res.status(typeof oldValue === 'undefined' ? 404 : 204).end();
+    } catch (err) {
+      res.status(500).end();
     }
   });
 

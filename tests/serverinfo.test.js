@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { serverInfo } = require('../models');
+const serverInfo = require('../models/serverinfo');
 const pkgJson = require('../package.json');
 
 

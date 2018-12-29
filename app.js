@@ -2,9 +2,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const makeRouter = require('./routes');
 const makeTokenAuth = require('./tokenauth');
-const { MemoryStore, serverInfo } = require('./models');
+const MemoryStore = require('./models/memorystore');
+const serverInfo = require('./models/serverinfo');
 
-function makeApp(config = {}) {
+async function makeApp(config = {}) {
   const app = express();
   app.disable('x-powered-by');
   app.use(bodyParser.raw({
@@ -13,6 +14,7 @@ function makeApp(config = {}) {
     type: 'application/json',
   }));
   const store = Object.create(MemoryStore);
+  await store.open();
   app.use(makeTokenAuth(config.token));
   app.use(makeRouter(store, serverInfo));
 
