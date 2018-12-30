@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const makeRouter = require('./routes');
 const makeTokenAuth = require('./tokenauth');
 const MemoryStore = require('./models/memorystore');
-const serverInfo = require('./models/serverinfo');
+
 
 async function makeApp(config = {}) {
   const app = express();
@@ -16,7 +16,7 @@ async function makeApp(config = {}) {
   const store = Object.create(MemoryStore);
   await store.open();
   app.use(makeTokenAuth(config.token));
-  app.use(makeRouter(store, serverInfo));
+  app.use(makeRouter(store));
 
   return app;
 }

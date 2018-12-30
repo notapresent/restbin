@@ -27,18 +27,6 @@ describe('App', () => {
   });
 
   describe('GET', () => {
-    it('/ should return 200 response with JSON body and server field', (done) => {
-      chai.request(app)
-        .get('/')
-        .end((err, res) => {
-          should.not.exist(err);
-          res.status.should.equal(200);
-          res.type.should.equal('application/json');
-          res.body.server.should.contain('restbin');
-          done();
-        });
-    });
-
     it('/key should return 200 response with prevoiusly put value', (done) => {
       chai.request(app)
         .get('/testKey')
