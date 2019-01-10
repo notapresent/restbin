@@ -5,8 +5,7 @@ const series = require('async/series');
 const { makeApp } = require('../app');
 
 chai.use(chaiHttp);
-const should = chai.should();
-
+const { expect } = chai;
 
 const AUTH_TOKEN = 'testtoken';
 
@@ -31,10 +30,10 @@ describe('App', () => {
       chai.request(app)
         .get('/testKey')
         .end((err, res) => {
-          should.not.exist(err);
-          res.status.should.equal(200);
-          res.type.should.equal('application/json');
-          res.body.objKey.should.equal('objValue');
+          expect(err).to.not.exist;
+          expect(res.status).to.equal(200);
+          expect(res.type).to.equal('application/json');
+          expect(res.body.objKey).to.equal('objValue');
           done();
         });
     });
@@ -43,9 +42,9 @@ describe('App', () => {
       chai.request(app)
         .get('/nonExistentKey')
         .end((err, res) => {
-          should.not.exist(err);
-          res.status.should.equal(404);
-          res.body.should.be.empty;
+          expect(err).not.exist;
+          expect(res.status).to.equal(404);
+          expect(res.body).to.be.empty;
           done();
         });
     });
@@ -60,9 +59,9 @@ describe('App', () => {
             .put(`/newTestKey?token=${AUTH_TOKEN}`)
             .send({ objKey: 'objValue' })
             .end((err, res) => {
-              should.not.exist(err);
-              res.status.should.equal(201);
-              res.body.should.be.empty;
+              expect(err).to.not.exist;
+              expect(res.status).to.equal(201);
+              expect(res.body).to.be.empty;
               cb();
             });
         },
@@ -70,9 +69,9 @@ describe('App', () => {
           chai.request(app)
             .get('/newTestKey')
             .end((err, res) => {
-              should.not.exist(err);
-              res.status.should.equal(200);
-              res.body.objKey.should.equal('objValue');
+              expect(err).to.not.exist;
+              expect(res.status).to.equal(200);
+              expect(res.body.objKey).to.equal('objValue');
               cb();
             });
         },
@@ -86,8 +85,8 @@ describe('App', () => {
             .put(`/testKey?token=${AUTH_TOKEN}`)
             .send({ objKey: 'newObjValue' })
             .end((err, res) => {
-              should.not.exist(err);
-              res.status.should.equal(204);
+              expect(err).to.not.exist;
+              expect(res.status).to.equal(204);
               cb();
             });
         },
@@ -95,9 +94,9 @@ describe('App', () => {
           chai.request(app)
             .get('/testKey')
             .end((err, res) => {
-              should.not.exist(err);
-              res.status.should.equal(200);
-              res.body.objKey.should.equal('newObjValue');
+              expect(err).to.not.exist;
+              expect(res.status).to.equal(200);
+              expect(res.body.objKey).to.equal('newObjValue');
               cb();
             });
         },
@@ -109,8 +108,8 @@ describe('App', () => {
         .put(`/_!invalidKey_@?token=${AUTH_TOKEN}`)
         .send({ objKey: 'objValue' })
         .end((err, res) => {
-          should.not.exist(err);
-          res.status.should.equal(400);
+          expect(err).to.not.exist;
+          expect(res.status).to.equal(400);
           done();
         });
     });
@@ -120,8 +119,8 @@ describe('App', () => {
         .put('/testKey') // no token!
         .send({ objKey: 'newObjValue' })
         .end((err, res) => {
-          should.not.exist(err);
-          res.status.should.equal(403);
+          expect(err).to.not.exist;
+          expect(res.status).to.equal(403);
           done();
         });
     });
@@ -131,8 +130,8 @@ describe('App', () => {
         .put(`/testKey?token=${AUTH_TOKEN}`)
         .set('content-type', 'text/plain')
         .end((err, res) => {
-          should.not.exist(err);
-          res.status.should.equal(400);
+          expect(err).to.not.exist;
+          expect(res.status).to.equal(400);
           done();
         });
     });
@@ -143,9 +142,9 @@ describe('App', () => {
       chai.request(app)
         .delete(`/testKey?token=${AUTH_TOKEN}`)
         .end((err, res) => {
-          should.not.exist(err);
-          res.status.should.equal(204);
-          res.body.should.be.empty;
+          expect(err).to.not.exist;
+          expect(res.status).to.equal(204);
+          expect(res.body).to.be.empty;
           done();
         });
     });
@@ -154,9 +153,9 @@ describe('App', () => {
       chai.request(app)
         .delete(`/nonExistentKey?token=${AUTH_TOKEN}`)
         .end((err, res) => {
-          should.not.exist(err);
-          res.status.should.equal(404);
-          res.body.should.be.empty;
+          expect(err).to.not.exist;
+          expect(res.status).to.equal(404);
+          expect(res.body).to.be.empty;
           done();
         });
     });
@@ -164,8 +163,8 @@ describe('App', () => {
       chai.request(app)
         .delete('/testKey') // no token!
         .end((err, res) => {
-          should.not.exist(err);
-          res.status.should.equal(403);
+          expect(err).to.not.exist;
+          expect(res.status).to.equal(403);
           done();
         });
     });
